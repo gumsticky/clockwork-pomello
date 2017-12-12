@@ -1,0 +1,63 @@
+ 
+// Program to control 2 x 28BYJ-48 stepper motors with Arduino Motor Shield L293D  
+// Thanks to : Arduino e Cia
+// 20 teeth in one rotation of stepper cog
+// 5 teeth per cm
+// <36 cm travel on Minute
+// <32 cm travel on Hour 
+//
+// Using AFMotor Library 
+#include <AFMotor.h>
+
+// Number of Steps per single rotation
+double totalSteps = 2048;
+ 
+// Define motors and ports : motor1 in M1/M2 and motor2 in M3/M4
+int motor1Hour = 1; 
+int motor2Min = 2;
+
+// Axel angle of rotation 
+int angle = 45; 
+ 
+// Stores the number of steps the motor will rotate
+double stepNumber = 0; 
+ 
+  // Defines the parameters of motor 1
+AF_Stepper stepperMotor1Hour(totalSteps, motor1Hour); 
+
+  // Defines the parameters of motor 1
+AF_Stepper stepperMotor2Min(totalSteps, motor2Min);
+ 
+void setup()
+{
+    // Defines the rotation speed of the motor 1
+  stepperMotor1Hour.setSpeed(10);
+    // Defines the rotation speed of the motor 2
+  stepperMotor2Min.setSpeed(10);
+    // Initialize serial
+  Serial.begin(9600);
+}
+ 
+void loop()
+{
+// Calculate the number of steps, based on the given angle
+  stepNumber = angle / (360 / totalSteps);
+ 
+// Shows the number of calculated steps on the serial monitor
+  Serial.print("Step Number : ");
+  Serial.println(stepNumber);
+ 
+// Move motor 1. Use FORWARD for clockwise,
+// BACKWARD for counter-clockwise
+  stepperMotor1Hour.step(stepNumber, FORWARD, SINGLE);
+  stepperMotor1Hour.release();
+
+  delay(10);
+  
+// Move motor 2. Use FORWARD for clockwise,
+// BACKWARD for counter-clockwise
+  stepperMotor2Min.step(stepNumber, BACKWARD, SINGLE);
+  stepperMotor2Min.release();
+ 
+  delay(500);
+}
